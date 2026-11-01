@@ -75,6 +75,7 @@ chunk-<N>ms-model/
 ```
 
 - 四档全下 ≈ 2.3 GB；只跑一档选一份即可（推荐先试 480 ms 或 160 ms）
+- 表里"离线"模式没有单独的 ONNX——同一个模型不限上下文解码就是离线效果；sherpa-onnx 部署只有流式权重，离线评测走 `.pt` checkpoint + `training/` 的 icefall 解码脚本
 - `streaming_exp/` 下还有 `.pt` checkpoint（~610 MB），仅训练/fine-tune 需要，部署不用下（GitHub 上游对应 `zipformer/checkpoint/`）
 - 当前只有 fp32；想压体积可自行用 onnxruntime 做 int8 量化（约 1/4 体积，精度略损）
 
@@ -86,7 +87,7 @@ X-ASR 是标准 sherpa-onnx zipformer2 transducer 模型，Apache-2.0 允许商�
 |---|---|---|
 | **做自己的 App/软件** | 某一档 ONNX 四件套（~600 MB） | sherpa-onnx 官方 SDK：C++ / Python / Java / Kotlin / Swift / C#，有 Windows、macOS、Linux、Android、iOS 预编译库；权重可随 App 打包或首启下载 |
 | **自建识别服务** | 某一档 ONNX + `deploy/src/` 三个脚本 | 直接跑 WebSocket 服务端（见下方快速开始），或照协议自己实现服务端 |
-| **本机听写/语音输入** | 同上 + VAD 模型 | 流式 ASR 只负责边听边出字，需另接端点检测（如 FireRedVAD）判断一句何时结束 |
+| **本机听写/语音输入** | 同上 + VAD 模型 | 流式 ASR 只负责边听边出字，需另接端点检测判断一句何时结束：可用 [FireRedVAD](https://github.com/FireRedTeam/FireRedVAD) 或 silero-vad（sherpa-onnx 内置 silero-vad 支持） |
 | **微调/训练** | `.pt` checkpoint + `training/` 训练代码 | 走 icefall/k2 训练框架，需要 GPU 与语料 |
 
 sherpa-onnx 侧模型类型传 `zipformer2`，运行时参数见快速开始一节；桌面应用可参考上游 Vibe XASR 的打包方式（单档模型 + 本地推理，离线可用）。
