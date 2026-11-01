@@ -3,11 +3,19 @@
 基于 icefall/k2、Zipformer transducer 架构的**中英文流式语音识别模型**使用说明。
 模型支持**真流式 + 离线**两种解码，通过 **sherpa-onnx** 部署，CPU 即可运行。
 
-- 模型仓库（下载权重用）：[HuggingFace](https://huggingface.co/GilgameshWind/X-ASR-zh-en) · [ModelScope](https://www.modelscope.ai/Gilgamesh-J/X-ASR-zh-en)
 - 上游代码仓库：[GitHub - Gilgamesh-J/X-ASR](https://github.com/Gilgamesh-J/X-ASR)（Apache-2.0）
 - 在线体验：[stream-asr.sjtuxlance.com](https://stream-asr.sjtuxlance.com/) · [HF Space](https://huggingface.co/spaces/chenxie95/X-ASR)
 
-> 本仓库只是使用文档，不含模型权重与上游代码。
+> 本仓库只是使用文档，不含模型权重与上游代码；权重从下方任一模型仓库下载。
+
+## 模型仓库（两个源，内容相同）
+
+| 源 | 地址 | 适用 |
+|---|---|---|
+| ModelScope（国内镜像） | https://www.modelscope.ai/Gilgamesh-J/X-ASR-zh-en | 国内网络，下载快 |
+| HuggingFace（国外） | https://huggingface.co/GilgameshWind/X-ASR-zh-en | 海外网络 |
+
+两个仓库内容一致：4 档 ONNX 权重（`deployment/models/`）、训练用 `.pt` checkpoint（`streaming_exp/`）、部署代码（`deployment/`）、Vibe XASR 桌面应用（`applications/`）。整包约 5.8 GB，按下面"二次开发需要什么"只取所需部分即可。
 
 ## 模型规格
 
@@ -55,8 +63,21 @@ chunk-<N>ms-model/
 ```
 
 - 四档全下 ≈ 2.3 GB；只跑一档选一份即可（推荐先试 480 ms 或 160 ms）
-- 另有两个 `.pt` checkpoint（各 ~610 MB）：`pretrained.pt` 与 `fintuned_with_punctuation.pt`，仅训练/fine-tune 需要，部署不用下
+- `streaming_exp/` 下还有 `.pt` checkpoint（~610 MB），仅训练/fine-tune 需要，部署不用下（GitHub 上游对应 `zipformer/checkpoint/`）
 - 当前只有 fp32；想压体积可自行用 onnxruntime 做 int8 量化（约 1/4 体积，精度略损）
+
+## 二次开发需要什么
+
+X-ASR 是标准 sherpa-onnx zipformer2 transducer 模型，Apache-2.0 允许商用与再分发（需保留 LICENSE 与版权头）。按目标取文件：
+
+| 目标 | 需要的文件 | 怎么集成 |
+|---|---|---|
+| **做自己的 App/软件** | 某一档 ONNX 四件套（~600 MB） | sherpa-onnx 官方 SDK：C++ / Python / Java / Kotlin / Swift / C#，有 Windows、macOS、Linux、Android、iOS 预编译库；权重可随 App 打包或首启下载 |
+| **自建识别服务** | 某一档 ONNX + `deployment/infer_and_client/` 两个脚本 | 直接跑 WebSocket 服务端（见下方快速开始），或照协议自己实现服务端 |
+| **本机听写/语音输入** | 同上 + VAD 模型 | 参考 `deployment/x-asr-live-demo/`：FireRedVAD 端点检测决定一句何时结束，X-ASR 负责流式识别 |
+| **微调/训练** | `.pt` checkpoint + `zipformer/` 训练代码 | 走 icefall/k2 训练框架，需要 GPU 与语料 |
+
+sherpa-onnx 侧模型类型传 `zipformer2`，运行时参数见快速开始一节；桌面应用可参考上游 Vibe XASR 的打包方式（单档模型 + 本地推理，离线可用）。
 
 ## 下载模型
 
