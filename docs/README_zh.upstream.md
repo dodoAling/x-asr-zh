@@ -1,0 +1,593 @@
+<h1 align="center">🎙️ X-ASR 系列</h1>
+
+<p align="center">
+  <b>基于 icefall/k2、Zipformer 和 sherpa-onnx 的流式语音识别模型系列。</b>
+</p>
+
+<table align="center" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td align="center" width="25%" style="border: none; padding: 0 14px;">
+      <a href="https://www.sjtu.edu.cn/"><img src="assets/institutions/sjtu.png" height="64" alt="上海交通大学"></a>
+    </td>
+    <td align="center" width="25%" style="border: none; padding: 0 14px;">
+      <a href="https://www.sii.edu.cn/"><img src="assets/institutions/sii.png" height="64" alt="上海创智学院"></a>
+    </td>
+    <td align="center" width="25%" style="border: none; padding: 0 14px;">
+      <a href="https://www.fudan.edu.cn/"><img src="assets/institutions/fudan.png" height="64" alt="复旦大学"></a>
+    </td>
+    <td align="center" width="25%" style="border: none; padding: 0 14px;">
+      <a href="https://www.hust.edu.cn/"><img src="assets/institutions/hust.png" height="64" alt="华中科技大学"></a>
+    </td>
+  </tr>
+</table>
+
+<p align="center">
+  <sub><b>参与机构</b></sub>
+</p>
+
+<p align="center">
+  <b>🌐 <a href="README.md">English</a></b>
+</p>
+
+<p align="center">
+  <a href="https://huggingface.co/GilgameshWind/X-ASR-zh-en">🤗 Hugging Face</a> |
+  <a href="https://www.modelscope.ai/Gilgamesh-J/X-ASR-zh-en">🧩 ModelScope</a> |
+  <a href="https://huggingface.co/spaces/chenxie95/X-ASR">🪐 Hugging Face Space</a> |
+  <a href="https://stream-asr.sjtuxlance.com/">🎧 在线 Demo</a> |
+  <a href="X-ASR-zh-en/deployment/x-asr-live-demo/README_zh.md">🎙️ 本地实时 Demo</a> |
+  <a href="X-ASR-zh-en/deployment/README.md">🚀 部署文档</a>
+</p>
+
+<p align="center">
+  <b>📄 X-ASR-zh-en 工作报告：Coming Soon</b>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Model%20Released-X--ASR--zh--en-blue" alt="Model released">
+  <img src="https://img.shields.io/badge/Languages-zh%20%7C%20en-green" alt="Languages">
+  <img src="https://img.shields.io/badge/Streaming-low%20latency%20%7C%20multi--mode-orange" alt="Streaming">
+  <img src="https://img.shields.io/badge/Deployment-sherpa--onnx-red" alt="Deployment">
+  <img src="https://img.shields.io/badge/许可证-Apache--2.0-lightgrey" alt="License">
+</p>
+
+<p align="center">
+  <a href="#项目概览">🔍 项目概览</a> |
+  <a href="#时间线">📅 时间线</a> |
+  <a href="#模型发布">📦 模型发布</a> |
+  <a href="#应用示例">🎙️ 应用示例</a> |
+  <a href="#评测结果">📊 评测结果</a> |
+  <a href="#快速开始">🚀 快速开始</a> |
+  <a href="#仓库结构">🗂️ 仓库结构</a>
+</p>
+
+---
+
+<a id="项目概览"></a>
+
+## 🔍 项目概览
+
+### 🧩 X-ASR
+
+**X-ASR** 是一个基于 **icefall** 框架构建的自动语音识别模型系列，重点面向 **流式 ASR** 和 **低延迟部署**，同时支持离线识别。当前仓库释放的是第一批 **中英文流式 ASR 模型**，后续 X-ASR 系列会围绕 **语言覆盖**、**模型架构** 和 **训练数据** 持续维护、更新与扩展。
+
+### 🤖 X-ASR-zh-en
+
+**X-ASR-zh-en** 基于约 **100 万小时**开源及收集语音数据训练。模型设计为采用 **Zipformer 架构** 的 **离线-流式一体化 transducer ASR 模型**，同时支持 **离线解码** 和 **真流式解码**。该模型提供多个流式 chunk size：**160 ms**、**480 ms**、**960 ms** 和 **1920 ms**，支持 **标点与大小写**，并可基于 **sherpa-onnx** 便捷部署。
+
+<p align="center">
+  <img src="assets/figures/zipformer.png" width="700" alt="Zipformer architecture">
+</p>
+
+<a id="时间线"></a>
+
+## 📅 时间线
+
+| 状态 | 事项 | 说明 |
+|:---:|:---:|:---:|
+| ✅ 已发布 | `X-ASR-zh-en` 初始版本 | 已发布中英文离线-流式一体化 ASR 模型、sherpa-onnx 部署文件和在线 Demo。 |
+| 📄 Coming Soon | `X-ASR-zh-en` 工作报告 | 将补充训练方案、模型结构、评测协议、部署细节和消融分析。 |
+| 🌏 近期计划 | 泰语、印尼语、越南语 ASR | 下一批流式 ASR 语言模型正在准备中。 |
+| 🔄 持续迭代 | 模型与数据更新 | 持续优化模型 scaling、架构改进、数据 refine、延迟、稳定性、标点和大小写。 |
+
+<a id="模型发布"></a>
+
+## 📦 模型发布
+
+| 模型 | 语言 | 类型 | 流式 chunk | 部署 | 工作报告 | 模型文件 |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| `X-ASR-zh-en` | 中文、英文 | 离线-流式一体化 transducer ASR | 160 ms, 480 ms, 960 ms, 1920 ms | sherpa-onnx | **Coming Soon** | [GitHub](X-ASR-zh-en/deployment), [Hugging Face](https://huggingface.co/GilgameshWind/X-ASR-zh-en), [ModelScope](https://www.modelscope.ai/Gilgamesh-J/X-ASR-zh-en) |
+
+## ⭐ 核心特性
+
+| 类别 | 说明 |
+|:---:|:---:|
+| **训练框架** | icefall / k2 |
+| **模型架构** | Zipformer transducer |
+| **训练规模** | 约 100 万小时开源及收集语音数据 |
+| **当前语言** | 中文、英文 |
+| **解码模式** | 离线解码与真流式解码 |
+| **流式 chunk** | 160 ms, 480 ms, 960 ms, 1920 ms |
+| **文本输出** | 支持标点和大小写 |
+| **部署运行时** | sherpa-onnx |
+| **接口形式** | WebSocket 流式服务端和 WAV 文件测试客户端 |
+
+<a id="应用示例"></a>
+
+## 🎙️ 应用示例
+
+我们欢迎大家基于 **X-ASR** 做更多尝试与使用。下面是一些基于 X-ASR 的下游应用，并已同步到本仓库。
+
+### 🧪 基于 FireRedVAD 的 Vibe-Coding 应用
+
+<table>
+  <tr>
+    <td width="100%" valign="top" align="center">
+      <a href="X-ASR-zh-en/deployment/x-asr-live-demo/README_zh.md">
+        <img src="X-ASR-zh-en/deployment/x-asr-live-demo/assets/streaming-demo.gif" width="720" alt="X-ASR 本机离线实时识别 Demo">
+      </a>
+      <br>
+      <b>本机离线 Vibe-Coding ASR Demo</b>
+      <br>
+      <sub>麦克风/WAV → FireRedVAD 端点检测 → X-ASR 流式解码 → partial/final 实时输出。适用于本机离线听写、语音输入原型和 vibe-coding 工作流。</sub>
+      <br><br>
+      <p align="left">
+        这个应用把 X-ASR 从一个模型发布，进一步连接成一个完整的本机语音输入闭环。FireRedVAD 负责判断语音从哪里开始、在哪里结束；X-ASR 在说话过程中持续进行低延迟流式识别；当检测到短暂停顿时，当前句子会被提交为 final 文本。
+      </p>
+      <p align="left">
+        这里的关键启发是：流式 ASR 本身只能边听边出 partial，但它并不知道用户什么时候说完一句话。加入基于 VAD 的端点检测之后，系统才更接近真实可用的本机听写、语音输入法原型，以及 vibe-coding 中“用语音驱动编辑和编码”的交互形态。
+      </p>
+      <p align="left">
+        当前 demo 默认把 final 结果打印在终端。进一步扩展时，可以把 final-text 回调替换成向编辑器或当前输入框注入文本，从而把 X-ASR 变成本机离线的免手输入、写作和编码接口。
+      </p>
+      <br><br>
+      <a href="X-ASR-zh-en/deployment/x-asr-live-demo/README_zh.md"><b>打开文档</b></a> ·
+      <a href="X-ASR-zh-en/deployment/x-asr-live-demo/README.md">English</a>
+    </td>
+  </tr>
+</table>
+
+### ⬇️ 桌面应用下载
+
+<p align="center">
+  <img src="assets/applications/vibe-xasr/icon.png" width="88" alt="Vibe XASR app icon">
+  <br>
+  <b>Vibe XASR</b> · 基于 X-ASR 的本地语音输入法
+  <br><br>
+  <a href="https://github.com/Gilgamesh-J/X-ASR/releases"><b>⬇️&nbsp; 下载 macOS 版 &nbsp;→</b></a>
+  <br>
+  <sub>Universal(Apple Silicon + Intel)· macOS 15.0+ · 已签名公证 · App 内自动更新</sub>
+</p>
+
+> **按住热键说话,文字直接落到光标处 —— 100% 本地、离线,数据永不出设备。** 由 X-ASR 流式引擎驱动,中英文混说无缝切换、实时上屏,全系统通用。
+
+**核心功能**
+
+- 🎙️ **三种听写模式** —— 说完插入 · 逐字流式(边说边上屏)· OnCall 持续候机(悬浮窗)
+- 📋 **内置便签 + 历史记录** —— 按日期保存,复制 / 编辑 / 导出
+- 📖 **个性化词典** —— 热词、同音字纠正、替换规则
+- ✨ **AI 润色(Beta)** —— 可选云端大模型顺句、去口水词(默认关闭,需手动开启)
+- 🔒 **隐私优先 + 自动更新** —— 全程离线;App 内一键升级
+
+<sub>🪟 也提供 **Windows 版**(见 [Releases](https://github.com/Gilgamesh-J/X-ASR/releases))—— 早期**预览版**,尚未充分测试,会持续同步 macOS 最新功能;遇到问题欢迎及时[提交反馈](https://github.com/Gilgamesh-J/X-ASR/issues)。</sub>
+
+<a id="评测结果"></a>
+
+## 📊 评测结果
+
+以下结果对应当前 **X-ASR-zh-en** 版本。所有结果均使用 **greedy search**。**Measurement：**英文结果使用 **WER (%)**，中文结果使用 **CER (%)**；越低越好。
+
+### 🧪 Public ASR Benchmarks（公开 ASR 基准评测）
+
+<table>
+  <thead>
+    <tr>
+      <th align="center" rowspan="2">⚙️ 模式</th>
+      <th align="center" rowspan="2">⏱️ Chunk size</th>
+      <th align="center" colspan="2">📚 LibriSpeech</th>
+      <th align="center" rowspan="2">🎙️ GigaSpeech</th>
+      <th align="center" colspan="2">🗣️ WenetSpeech</th>
+    </tr>
+    <tr>
+      <th align="center">clean</th>
+      <th align="center">other</th>
+      <th align="center">net</th>
+      <th align="center">meeting</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">Streaming</td>
+      <td align="center">160 ms</td>
+      <td align="center">3.49</td>
+      <td align="center">8.75</td>
+      <td align="center">10.32</td>
+      <td align="center">8.72</td>
+      <td align="center">10.47</td>
+    </tr>
+    <tr>
+      <td align="center">Streaming</td>
+      <td align="center">480 ms</td>
+      <td align="center">2.99</td>
+      <td align="center">7.36</td>
+      <td align="center">9.70</td>
+      <td align="center">7.46</td>
+      <td align="center">9.11</td>
+    </tr>
+    <tr>
+      <td align="center">Streaming</td>
+      <td align="center">960 ms</td>
+      <td align="center">2.87</td>
+      <td align="center">6.77</td>
+      <td align="center">9.59</td>
+      <td align="center">6.97</td>
+      <td align="center">8.40</td>
+    </tr>
+    <tr>
+      <td align="center">Streaming</td>
+      <td align="center">1920 ms</td>
+      <td align="center">2.75</td>
+      <td align="center">6.33</td>
+      <td align="center">9.43</td>
+      <td align="center">6.58</td>
+      <td align="center">7.88</td>
+    </tr>
+    <tr>
+      <td align="center">Offline</td>
+      <td align="center">-</td>
+      <td align="center"><b>2.56</b></td>
+      <td align="center"><b>5.56</b></td>
+      <td align="center"><b>9.17</b></td>
+      <td align="center"><b>5.83</b></td>
+      <td align="center"><b>7.06</b></td>
+    </tr>
+  </tbody>
+</table>
+
+**说明：** 加粗数值表示该评测列中当前列出的最佳结果。
+
+### 🏆 Public Benchmark Model Comparison（公开基准模型对比）
+
+下表用于对比不同 ASR 模型在同一组公开 benchmark 上的结果。排名按五个评测列的 **AVG** 从低到高计算，越低越好。参数量仅使用来源表中明确标注的信息。
+
+<table>
+  <thead>
+    <tr>
+      <th align="center" rowspan="2">🏅 排名</th>
+      <th align="center" rowspan="2">模型</th>
+      <th align="center" rowspan="2">参数量</th>
+      <th align="center" colspan="2">📚 LibriSpeech</th>
+      <th align="center" rowspan="2">🎙️ GigaSpeech</th>
+      <th align="center" colspan="2">🗣️ WenetSpeech</th>
+      <th align="center" rowspan="2">AVG</th>
+    </tr>
+    <tr>
+      <th align="center">clean</th>
+      <th align="center">other</th>
+      <th align="center">net</th>
+      <th align="center">meeting</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td align="center">1</td><td align="center">Qwen3-ASR</td><td align="center">1.7B</td><td align="center">1.65</td><td align="center">3.45</td><td align="center">8.56</td><td align="center">5.29</td><td align="center">5.46</td><td align="center"><b>4.882</b></td></tr>
+    <tr><td align="center">2</td><td align="center">Qwen3-ASR</td><td align="center">0.6B</td><td align="center">2.18</td><td align="center">4.54</td><td align="center">8.94</td><td align="center">5.97</td><td align="center">6.88</td><td align="center">5.702</td></tr>
+    <tr><td align="center">3</td><td align="center"><b>X-ASR-zh-en</b> (offline)</td><td align="center">0.16B</td><td align="center">2.56</td><td align="center">5.56</td><td align="center">9.17</td><td align="center">5.83</td><td align="center">7.06</td><td align="center">6.036</td></tr>
+    <tr><td align="center">4</td><td align="center">SenseVoice-small</td><td align="center">234M</td><td align="center">3.16</td><td align="center">7.21</td><td align="center">11.24</td><td align="center">5.73</td><td align="center">6.47</td><td align="center">6.762</td></tr>
+    <tr><td align="center">5</td><td align="center">VibeVoice-ASR</td><td align="center">9B</td><td align="center">2.18</td><td align="center">5.65</td><td align="center">9.49</td><td align="center">14.45</td><td align="center">17.19</td><td align="center">9.792</td></tr>
+  </tbody>
+</table>
+
+### 🧭 Vertical-Domain Benchmarks（垂类）
+
+以下结果为当前 **X-ASR-zh-en** 版本在 **GigaSpeechBench vertical-domain** 上的评测结果。表中数值为 **WER/CER 百分比**，越低越好。领域缩写沿用 GigaSpeechBench 的 vertical-domain 标注。
+
+#### CH
+
+<table>
+  <thead>
+    <tr>
+      <th align="center">⚙️ 模式</th>
+      <th align="center">⏱️ Chunk size</th>
+      <th align="center">ARG</th>
+      <th align="center">AIT</th>
+      <th align="center">ART</th>
+      <th align="center">BIO</th>
+      <th align="center">ECM</th>
+      <th align="center">ENG</th>
+      <th align="center">ENT</th>
+      <th align="center">FIN</th>
+      <th align="center">HUM</th>
+      <th align="center">LAW</th>
+      <th align="center">MED</th>
+      <th align="center">MIL</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td align="center">Streaming</td><td align="center">160 ms</td><td align="center">9.88</td><td align="center">6.76</td><td align="center">4.39</td><td align="center">7.32</td><td align="center">4.13</td><td align="center">3.58</td><td align="center">8.45</td><td align="center">3.23</td><td align="center">10.42</td><td align="center">6.58</td><td align="center">4.25</td><td align="center">2.55</td></tr>
+    <tr><td align="center">Streaming</td><td align="center">480 ms</td><td align="center">8.67</td><td align="center">6.17</td><td align="center">3.60</td><td align="center">6.22</td><td align="center">3.78</td><td align="center">3.04</td><td align="center">7.04</td><td align="center">2.78</td><td align="center">9.43</td><td align="center">5.84</td><td align="center">3.76</td><td align="center">2.11</td></tr>
+    <tr><td align="center">Streaming</td><td align="center">960 ms</td><td align="center">8.00</td><td align="center">5.69</td><td align="center">3.44</td><td align="center">6.10</td><td align="center">3.69</td><td align="center">2.88</td><td align="center">6.71</td><td align="center">2.72</td><td align="center">9.07</td><td align="center">5.58</td><td align="center">3.69</td><td align="center">2.11</td></tr>
+    <tr><td align="center">Streaming</td><td align="center">1920 ms</td><td align="center">7.24</td><td align="center">5.58</td><td align="center">3.27</td><td align="center">5.82</td><td align="center">3.48</td><td align="center">2.74</td><td align="center">6.55</td><td align="center">2.57</td><td align="center">8.59</td><td align="center">4.97</td><td align="center">3.53</td><td align="center">1.94</td></tr>
+    <tr><td align="center">Offline</td><td align="center">-</td><td align="center"><b>6.56</b></td><td align="center"><b>4.54</b></td><td align="center"><b>2.77</b></td><td align="center"><b>5.04</b></td><td align="center"><b>2.99</b></td><td align="center"><b>2.32</b></td><td align="center"><b>6.02</b></td><td align="center"><b>1.94</b></td><td align="center"><b>7.64</b></td><td align="center"><b>4.20</b></td><td align="center"><b>2.90</b></td><td align="center"><b>1.68</b></td></tr>
+  </tbody>
+</table>
+
+#### EN
+
+<table>
+  <thead>
+    <tr>
+      <th align="center">⚙️ 模式</th>
+      <th align="center">⏱️ Chunk size</th>
+      <th align="center">ARG</th>
+      <th align="center">AIT</th>
+      <th align="center">ART</th>
+      <th align="center">BIO</th>
+      <th align="center">ECM</th>
+      <th align="center">ENG</th>
+      <th align="center">ENT</th>
+      <th align="center">FIN</th>
+      <th align="center">HUM</th>
+      <th align="center">LAW</th>
+      <th align="center">MED</th>
+      <th align="center">MIL</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td align="center">Streaming</td><td align="center">160 ms</td><td align="center">5.29</td><td align="center">8.57</td><td align="center">8.55</td><td align="center">7.31</td><td align="center">4.33</td><td align="center">5.01</td><td align="center">16.25</td><td align="center">5.58</td><td align="center">7.36</td><td align="center">13.39</td><td align="center">6.03</td><td align="center">6.20</td></tr>
+    <tr><td align="center">Streaming</td><td align="center">480 ms</td><td align="center">4.62</td><td align="center">8.40</td><td align="center">7.73</td><td align="center">6.12</td><td align="center">4.19</td><td align="center">4.65</td><td align="center">14.50</td><td align="center">5.21</td><td align="center">6.79</td><td align="center">11.51</td><td align="center">5.59</td><td align="center">6.02</td></tr>
+    <tr><td align="center">Streaming</td><td align="center">960 ms</td><td align="center">4.58</td><td align="center">8.35</td><td align="center">7.45</td><td align="center">6.00</td><td align="center">4.13</td><td align="center">4.44</td><td align="center">13.99</td><td align="center">5.12</td><td align="center">6.58</td><td align="center">10.86</td><td align="center">5.52</td><td align="center">6.04</td></tr>
+    <tr><td align="center">Streaming</td><td align="center">1920 ms</td><td align="center">4.33</td><td align="center">8.32</td><td align="center">6.90</td><td align="center">5.89</td><td align="center"><b>4.00</b></td><td align="center">4.37</td><td align="center">13.61</td><td align="center">4.98</td><td align="center">6.39</td><td align="center">10.52</td><td align="center">5.45</td><td align="center">5.78</td></tr>
+    <tr><td align="center">Offline</td><td align="center">-</td><td align="center"><b>4.09</b></td><td align="center"><b>8.28</b></td><td align="center"><b>6.73</b></td><td align="center"><b>5.48</b></td><td align="center">4.12</td><td align="center"><b>4.30</b></td><td align="center"><b>12.30</b></td><td align="center"><b>4.94</b></td><td align="center"><b>6.17</b></td><td align="center"><b>10.41</b></td><td align="center"><b>5.35</b></td><td align="center"><b>5.61</b></td></tr>
+  </tbody>
+</table>
+
+## 🎧 Demo
+
+基于 **sherpa-onnx** 的在线 Demo：
+
+- [https://stream-asr.sjtuxlance.com/](https://stream-asr.sjtuxlance.com/)
+
+Demo 视频：
+
+<a href="assets/demos/demo.mov">
+  <img src="assets/figures/demo-preview.png" width="700" alt="X-ASR demo video preview">
+</a>
+
+[打开 Demo 视频](assets/demos/demo.mov)
+
+<a id="快速开始"></a>
+
+## 🚀 快速开始
+
+本节重点说明如何基于 **sherpa-onnx** 构建并运行 **WebSocket 流式识别服务端** 与对应的 **WebSocket 客户端**。完整部署参数、模型切换方式、运行时选项和生产部署说明见 [deployment 文档](X-ASR-zh-en/deployment/README.md)。
+
+### 1. 克隆仓库或下载模型文件
+
+本仓库使用 **Git LFS** 管理 ONNX 模型文件和 demo 媒体文件。克隆或拉取大文件前需要先安装并初始化 Git LFS。
+
+#### GitHub
+
+如果需要完整项目仓库、中英文文档、训练参考、部署示例和 issue 跟踪，请使用 GitHub。
+
+```bash
+git lfs install
+git clone https://github.com/Gilgamesh-J/X-ASR.git
+cd X-ASR
+git lfs pull
+```
+
+#### Hugging Face
+
+如果需要模型 artifact 页面以及标准 Hugging Face Hub 下载工具，请使用 Hugging Face。
+
+```bash
+hf download GilgameshWind/X-ASR-zh-en \
+  --local-dir ./X-ASR-zh-en
+```
+
+#### ModelScope
+
+如果希望使用 ModelScope 镜像或从 ModelScope 通过 Git LFS 克隆，请使用 ModelScope。
+
+```bash
+git lfs install
+git clone https://www.modelscope.ai/Gilgamesh-J/X-ASR-zh-en.git
+cd X-ASR-zh-en
+git lfs pull
+```
+
+### 2. 准备 sherpa-onnx 运行环境
+
+如果你克隆的是完整 GitHub 项目，进入：
+
+```bash
+cd X-ASR/X-ASR-zh-en/deployment
+```
+
+如果你从 Hugging Face 下载，或从 ModelScope 克隆，进入：
+
+```bash
+cd X-ASR-zh-en/deployment
+```
+
+然后准备 Python 环境：
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+### 3. 启动 WebSocket 服务端
+
+服务端会封装 `sherpa_onnx.OnlineRecognizer`，并提供 WebSocket 接口。每个 WebSocket 连接都会维护独立的识别 session，因此多个客户端并发访问时不会共享解码状态。下面示例使用 CPU 启动 **160 ms 流式模型**，监听地址为 `ws://0.0.0.0:6666`。
+
+```bash
+python infer_and_client/sherpa_streaming_server.py \
+  --host 0.0.0.0 \
+  --port 6666 \
+  --tokens models/chunk-160ms-model/tokens.txt \
+  --encoder models/chunk-160ms-model/encoder-160ms.onnx \
+  --decoder models/chunk-160ms-model/decoder-160ms.onnx \
+  --joiner models/chunk-160ms-model/joiner-160ms.onnx \
+  --provider cpu \
+  --sample-rate 16000 \
+  --feature-dim 80 \
+  --num-threads 1 \
+  --decoding-method greedy_search \
+  --model-type zipformer2 \
+  --enable-endpoint-detection 0 \
+  --text-format none
+```
+
+`--tokens`、`--encoder`、`--decoder` 和 `--joiner` 必须来自同一个模型目录。
+
+#### 可选：交互式 tail-probe 模式
+
+默认模式下，服务端只基于客户端送来的音频块进行解码。对于实时语音输入法等交互场景，可以开启可选的 energy-based tail probe：当服务端检测到用户已经说过话，并持续进入低能量/静音区间时，会自动追加一小段静音并再次触发 decode，以帮助用户停顿后的尾部 partial 结果更及时刷新。
+
+```bash
+python infer_and_client/sherpa_streaming_server.py \
+  --host 0.0.0.0 \
+  --port 6666 \
+  --tokens models/chunk-160ms-model/tokens.txt \
+  --encoder models/chunk-160ms-model/encoder-160ms.onnx \
+  --decoder models/chunk-160ms-model/decoder-160ms.onnx \
+  --joiner models/chunk-160ms-model/joiner-160ms.onnx \
+  --provider cpu \
+  --sample-rate 16000 \
+  --feature-dim 80 \
+  --num-threads 1 \
+  --decoding-method greedy_search \
+  --model-type zipformer2 \
+  --enable-endpoint-detection 0 \
+  --text-format none \
+  --enable-energy-tail-probe 1 \
+  --low-energy-rms 0.003 \
+  --speech-rms 0.010 \
+  --min-speech-ms 200 \
+  --min-silence-ms 500 \
+  --tail-probe-ms 500 \
+  --tail-probe-cooldown-ms 1000
+```
+
+RMS 与静音阈值需要根据麦克风增益、背景噪声和前端分包频率调整。如果希望保持最保守、最兼容的服务行为，请继续使用 `--enable-energy-tail-probe 0`。
+
+### 4. 运行 WebSocket 客户端
+
+另开一个终端：
+
+```bash
+cd X-ASR-zh-en/deployment
+source .venv/bin/activate
+
+python infer_and_client/sherpa_streaming_client.py \
+  --server-uri ws://127.0.0.1:6666 \
+  --wav /path/to/test.wav \
+  --chunk-ms 100 \
+  --simulate-realtime 1
+```
+
+客户端会读取 WAV 文件，将其转换或重采样为 **16 kHz 单声道 int16 PCM**，通过 WebSocket 发送二进制 PCM 音频块，并打印服务端返回的 partial/final 识别结果。当 `--simulate-realtime 1` 启用时，`--chunk-ms 100` 表示大约每 100 ms 发送一个音频包。
+
+### 5. WebSocket 协议
+
+当前客户端和服务端使用一个简单的流式协议：
+
+| 步骤 | 消息 | 作用 |
+|:---:|:---|:---|
+| 1 | JSON: `{"type": "start", "sample_rate": 16000}` | 开始一次识别会话 |
+| 2 | Binary: int16 PCM audio chunks | 持续发送音频流 |
+| 3 | JSON: `{"type": "end"}` | 结束本次会话并输出 final 结果 |
+
+更完整的部署说明见 [X-ASR-zh-en/deployment/README.md](X-ASR-zh-en/deployment/README.md)。如果需要查看服务端/客户端脚本级教程与完整参数说明，请参考 [X-ASR-zh-en/deployment/infer_and_client/README.md](X-ASR-zh-en/deployment/infer_and_client/README.md)。
+
+<a id="仓库结构"></a>
+
+## 🗂️ 仓库结构
+
+```text
+X-ASR/
+|-- README.md
+|-- README_zh.md
+|-- LICENSE
+|-- assets/
+|   |-- figures/
+|   |   |-- demo-preview.png
+|   |   `-- zipformer.png
+|   |-- demos/
+|   |   `-- demo.mov
+|   `-- institutions/
+|       |-- sjtu.png
+|       |-- sii.png
+|       |-- fudan.png
+|       `-- hust.png
+`-- X-ASR-zh-en/
+    |-- deployment/
+    |   |-- README.md
+    |   |-- requirements.txt
+    |   |-- infer_and_client/
+    |   |   |-- README.md
+    |   |   |-- sherpa_streaming_infer.py
+    |   |   |-- sherpa_streaming_server.py
+    |   |   `-- sherpa_streaming_client.py
+    |   |-- x-asr-live-demo/
+    |   |   |-- README.md
+    |   |   |-- README_zh.md
+    |   |   |-- live_asr.py
+    |   |   |-- download_models.sh
+    |   |   |-- requirements.txt
+    |   |   `-- assets/
+    |   `-- models/
+    |       |-- README.md
+    |       |-- chunk-160ms-model/
+    |       |-- chunk-480ms-model/
+    |       |-- chunk-960ms-model/
+    |       `-- chunk-1920ms-model/
+    `-- zipformer/
+        |-- README.md
+        |-- train.py
+        |-- finetune.py
+        |-- decode.py
+        |-- streaming_decode.py
+        |-- export.py
+        |-- export-onnx.py
+        |-- export-onnx-streaming.py
+        |-- model.py
+        |-- zipformer.py
+        |-- data/
+        |   |-- lang_5000/
+        |   |   |-- bpe.model
+        |   |   `-- tokens.txt
+        |   `-- lang_5000_with_punctuation/
+        |       |-- bpe_punc.model
+        |       `-- tokens.txt
+        `-- checkpoint/
+            |-- pretrained.pt
+            `-- fintuned_with_punctuation.pt
+```
+
+`X-ASR-zh-en/deployment/` 包含可直接运行的 sherpa-onnx 部署文件，包括 WebSocket 服务端/客户端路径和本地实时 ASR 应用示例。`X-ASR-zh-en/zipformer/` 包含本次发布模型对应的 icefall/Zipformer 训练、解码、导出 recipe 文件、tokenizer/data 文件和 PyTorch checkpoint。
+
+## 🤝 贡献
+
+欢迎围绕以下方向反馈或贡献：
+
+- 不同 CPU/GPU 环境下的部署问题
+- 流式延迟和稳定性反馈
+- 新数据集或新领域上的评测结果
+- 新语言或后续发布需求
+- 文档和示例改进
+
+如果反馈部署问题，请提供 **运行环境**、**执行命令**、**输入音频格式** 和 **错误日志**。
+
+## 📜 许可证
+
+本项目使用 **Apache-2.0 License**。
+
+## 🙏 致谢
+
+本模型系列基于 **icefall** 训练，并使用 **sherpa-onnx** 部署。
+
+- icefall: https://github.com/k2-fsa/icefall
+- sherpa-onnx: https://github.com/k2-fsa/sherpa-onnx

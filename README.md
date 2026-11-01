@@ -6,7 +6,19 @@
 - 上游代码仓库：[GitHub - Gilgamesh-J/X-ASR](https://github.com/Gilgamesh-J/X-ASR)（Apache-2.0）
 - 在线体验：[stream-asr.sjtuxlance.com](https://stream-asr.sjtuxlance.com/) · [HF Space](https://huggingface.co/spaces/chenxie95/X-ASR)
 
-> 本仓库只是使用文档，不含模型权重与上游代码；权重从下方任一模型仓库下载。
+> 本仓库为 X-ASR 的中文二次发行：包含上游全部代码（部署、live-demo、训练、桌面应用工程），
+> **不含模型权重与 demo 视频**（体积太大，按下方说明从模型仓库下载）。
+
+## 仓库结构
+
+| 目录 | 内容 |
+|---|---|
+| `X-ASR-zh-en/deployment/` | sherpa-onnx 部署：WebSocket 服务端/客户端、live-demo、模型目录（权重需下载） |
+| `X-ASR-zh-en/zipformer/` | icefall 训练代码与词表（`.pt` checkpoint 需下载） |
+| `projects/Vibe_XASR/` | 桌面语音输入法工程（macOS / Windows） |
+| `scripts/` | 本仓库新增：模型下载脚本 |
+| `docs/` | 上游原始 README（英文/中文存档） |
+| `assets/` | 上游图片素材（demo.mov 已排除，见上游仓库） |
 
 ## 模型仓库（两个源，内容相同）
 
@@ -160,5 +172,6 @@ python infer_and_client/sherpa_streaming_client.py `
 
 ## 说明
 
-- 模型权重与部署代码版权归上游所有，[Apache-2.0](https://github.com/Gilgamesh-J/X-ASR/blob/main/LICENSE)，商用允许
-- 本仓库仅维护中文使用文档，与上游无官方关系；模型问题请去 [上游 Issues](https://github.com/Gilgamesh-J/X-ASR/issues)
+- 代码与模型权重来自 [Gilgamesh-J/X-ASR](https://github.com/Gilgamesh-J/X-ASR)，[Apache-2.0](LICENSE)，商用允许，再分发需保留 LICENSE 与版权头
+- 本仓库对上游的改动：README 替换为中文指南（原文存档在 `docs/`）、新增 `scripts/download-models.ps1`、`.gitignore` 排除权重文件；其余代码未改动
+- 本仓库与上游无官方关系；模型问题请去 [上游 Issues](https://github.com/Gilgamesh-J/X-ASR/issues)

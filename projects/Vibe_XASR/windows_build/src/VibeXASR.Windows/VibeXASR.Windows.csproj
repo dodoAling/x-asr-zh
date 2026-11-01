@@ -1,0 +1,101 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <!-- WinForms tray + overlay; net8.0-windows pulls in the Windows desktop FX. -->
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+
+    <!-- SendInput / P/Invoke struct marshalling needs unsafe in a couple of spots. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+    <!-- Builds for both Intel and ARM Windows. Pick the RID at publish time. -->
+    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+    <Platforms>AnyCPU</Platforms>
+
+    <RootNamespace>VibeXASR.Windows</RootNamespace>
+    <AssemblyName>VibeXASR</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+
+    <!-- Embedded Win32 icon so Explorer / shortcuts / Add-Remove show the app mark
+         (the tray icon is drawn at runtime, but the .exe needs a real icon resource too). -->
+    <ApplicationIcon>appicon.ico</ApplicationIcon>
+
+    <!-- High-DPI aware tray/overlay; configured in code via ApplicationConfiguration too. -->
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+
+    <!-- App version — read at runtime (About tab + WinSparkle update comparison) and used as
+         the MSI ProductVersion. Bump for each release; keep in sync with the appcast feed. -->
+    <!-- Windows tracks the macOS base version (1.4.0) + a Windows patch suffix (.1), labelled
+         "-beta". AssemblyVersion/FileVersion stay numeric (1.4.0.1) for WinSparkle + MSI version
+         comparison; InformationalVersion carries the "-beta" shown on the About page. -->
+    <Version>2.0.0.4-beta</Version>
+    <FileVersion>2.0.0.4</FileVersion>
+    <AssemblyVersion>2.0.0.4</AssemblyVersion>
+    <InformationalVersion>2.0.0.4-beta</InformationalVersion>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- TODO(win): verify these versions on Windows. As of early 2026 these are recent stable
+         releases on nuget.org. `dotnet restore` will error if a version is yanked/unavailable. -->
+
+    <!-- sherpa-onnx C# bindings + bundled Windows native runtime (win-x64 / win-arm64).
+         Provides OnlineRecognizer, OnlineStream, VoiceActivityDetector, etc. -->
+    <PackageReference Include="org.k2fsa.sherpa.onnx" Version="1.10.32" />
+
+    <!-- WASAPI mic capture + resampling helpers. -->
+    <PackageReference Include="NAudio" Version="2.2.1" />
+
+    <!-- AI 润色(本地大模型 / local LLM): llama.cpp via LLamaSharp + the CPU backend (universal,
+         no GPU/driver requirement). Loads the CPM5 refiner GGUF (~656 MB, downloaded on demand to
+         %APPDATA%\VibeXASR\models\refiner — NOT bundled in the MSI). The backend package ships the
+         native llama/ggml DLLs under runtimes/win-x64/native/; PublishSingleFile extracts them at
+         runtime (IncludeNativeLibrariesForSelfExtract already set). macOS uses Metal; CPU is the
+         portable Windows equivalent (1B q4_k_m on a short utterance ≈ 1–3 s, within the safe-fallback timeout). -->
+    <PackageReference Include="LLamaSharp" Version="0.27.0" />
+    <PackageReference Include="LLamaSharp.Backend.Cpu" Version="0.27.0" />
+  </ItemGroup>
+
+  <!-- Keep the LLamaSharp native DLLs (llama/ggml*/mtmd, copied by the backend's props under
+       runtimes\<rid>\native\<avx>\) LOOSE beside the single-file exe instead of embedding + self-extracting
+       them. LLamaSharp's native loader searches AppContext.BaseDirectory (the .exe dir for a single-file app)
+       for that runtimes\…\native tree, but does NOT look in the self-extract temp dir — so embedded copies are
+       never found. ExcludeFromSingleFile leaves the tree on disk next to the exe where the loader expects it
+       (and shrinks the exe). Matched by filename (llama/ggml*/mtmd) — unambiguously LLamaSharp; sherpa-onnx
+       ships onnxruntime/sherpa-onnx natives, which keep self-extracting as before. -->
+  <Target Name="_LlamaNativesLooseInSingleFile" BeforeTargets="_ComputeFilesToBundle">
+    <ItemGroup>
+      <ResolvedFileToPublish Condition="'%(Filename)' == 'llama' or '%(Filename)' == 'ggml' or $([System.String]::new('%(Filename)').StartsWith('ggml-')) or '%(Filename)' == 'mtmd'">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+    <Message Importance="high" Text="[VibeXASR] llama natives kept loose (excluded from single-file bundle)." />
+  </Target>
+
+  <!-- WinSparkle (auto-update) native DLL, x64. Copied beside the exe in publish + install dir;
+       loaded via a DllImportResolver from AppContext.BaseDirectory. MIT (third_party/winsparkle/COPYING). -->
+  <ItemGroup>
+    <None Include="..\..\third_party\winsparkle\WinSparkle.dll">
+      <Link>WinSparkle.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <!-- Keep it a loose file beside the single-file exe (not embedded), so the
+           DllImportResolver can load it from AppContext.BaseDirectory. -->
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </None>
+    <!-- FireRedVAD native shim (default VAD). Loose beside the exe; loaded via NativeLoader.
+         Its onnxruntime.dll import resolves to sherpa-onnx's (already loaded by the ASR). -->
+    <None Include="..\..\third_party\firered\firered_vad.dll">
+      <Link>firered_vad.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </None>
+  </ItemGroup>
+
+</Project>

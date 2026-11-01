@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Vibe XASR Windows auto-update feed (WinSparkle). Separate from appcast.xml (macOS/Sparkle).
+     Windows rides the current macOS release tag; a Windows-only patch carries a .N suffix
+     (e.g. 1.1.3.1) so there is a single "Latest" release. Served as a raw GitHub file at
+     https://raw.githubusercontent.com/Gilgamesh-J/X-ASR/main/projects/docs/appcast-win.xml
+     Sign the MSI with third_party/winsparkle/winsparkle-tool.exe (the "sign" subcommand with the
+     private key), then paste into sparkle:edSignature and set length to the MSI byte size. -->
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+  <channel>
+    <title>Vibe XASR (Windows)</title>
+    <link>https://raw.githubusercontent.com/Gilgamesh-J/X-ASR/main/projects/docs/appcast-win.xml</link>
+    <description>Vibe XASR Windows auto-update feed</description>
+    <language>zh</language>
+    <item>
+      <title>Vibe XASR 2.0.0.4-beta</title>
+      <pubDate>Thu, 18 Jun 2026 21:00:00 +0800</pubDate>
+      <link>https://github.com/Gilgamesh-J/X-ASR/releases/tag/vibe-v2.0</link>
+      <description><![CDATA[
+        <h3>Vibe XASR 2.0.0.4-beta (Windows)</h3>
+        <ul>
+          <li><b>本地大模型润色(完全离线)</b>:全新本地 CPM5 大模型润色 —— 去口癖、数字规整(ITN)、补标点、改口纠正,
+              全程在本机 CPU 上运行,不联网、不上传。首次开启自动下载约 656 MB 模型;在「设置 · AI 润色 · 本地大模型」
+              可开启 / 删除,模型来源链接到 ModelScope(CPM5_refiner_v1)。</li>
+          <li>本地与云端润色<b>二选一</b>(互斥):开启其一会自动关闭另一个。</li>
+          <li>AI 润色(本地 / 云端)<b>仅在「说完插入」模式下可用</b>:开启时听写模式锁为「说完插入」,
+              切到「逐字插入 / 持续候机」会先征询关闭润色。</li>
+        </ul>
+        <p>macOS is the primary development branch; the Windows build is compiled in sync and not yet fully tested (preview). Feedback welcome.<br/>
+        macOS 为主开发分支,Windows 为同步编译,尚未充分测试(预览版)。欢迎反馈。</p>
+      ]]></description>
+      <enclosure
+        url="https://models.speech.wiki/app/VibeXASR-2.0.0.4-windows-x64.msi"
+        sparkle:os="windows"
+        sparkle:version="2.0.0.4"
+        sparkle:shortVersionString="2.0.0.4-beta"
+        sparkle:edSignature="vmj/R3k4c/oxYDV0Xr7u8jwl1prIokougdyVdvSk2YUPw+j7aAP3ex36ntEjG4DG+wt9AuT/La3UT8n5PpYrCg=="
+        length="217477120"
+        type="application/octet-stream" />
+    </item>
+  </channel>
+</rss>

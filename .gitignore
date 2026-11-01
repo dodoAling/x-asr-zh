@@ -1,13 +1,22 @@
-# 模型权重不随仓库走
-X-ASR-zh-en/
-models/
+# 模型权重不随仓库走（用 scripts/download-models.ps1 拉取）
+X-ASR-zh-en/deployment/models/
+X-ASR-zh-en/zipformer/checkpoint/
 *.onnx
 *.pt
-*.bin
+*.safetensors
+*.ckpt
+assets/demos/*.mov
 
 # Python
-.venv/
 __pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Logs and runtime files
+*.log
+logs/
+*.tmp
 
 # 系统
 .DS_Store
