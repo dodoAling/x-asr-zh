@@ -4,21 +4,20 @@
 模型支持**真流式 + 离线**两种解码，通过 **sherpa-onnx** 部署，CPU 即可运行。
 
 - 上游代码仓库：[GitHub - Gilgamesh-J/X-ASR](https://github.com/Gilgamesh-J/X-ASR)（Apache-2.0）
-- 在线体验：[stream-asr.sjtuxlance.com](https://stream-asr.sjtuxlance.com/) · [HF Space](https://huggingface.co/spaces/chenxie95/X-ASR)
 
-> 本仓库为 X-ASR 的中文二次发行：包含上游全部代码（部署、live-demo、训练、桌面应用工程），
+> 本仓库为 X-ASR 的中文二次发行：包含上游全部代码（部署、训练、桌面应用工程），
 > **不含模型权重与 demo 视频**（体积太大，按下方说明从模型仓库下载）。
 
 ## 仓库结构
 
 | 目录 | 内容 |
 |---|---|
-| `X-ASR-zh-en/deployment/` | sherpa-onnx 部署：WebSocket 服务端/客户端、live-demo、模型目录（权重需下载） |
+| `X-ASR-zh-en/deployment/` | sherpa-onnx 部署：WebSocket 服务端/客户端、模型目录（权重需下载） |
 | `X-ASR-zh-en/zipformer/` | icefall 训练代码与词表（`.pt` checkpoint 需下载） |
 | `projects/Vibe_XASR/` | 桌面语音输入法工程（macOS / Windows） |
 | `scripts/` | 本仓库新增：模型下载脚本 |
 | `docs/` | 上游原始 README（英文/中文存档） |
-| `assets/` | 上游图片素材（demo.mov 已排除，见上游仓库） |
+| `assets/` | 上游图片素材 |
 
 ## 模型仓库（两个源，内容相同）
 
@@ -86,7 +85,7 @@ X-ASR 是标准 sherpa-onnx zipformer2 transducer 模型，Apache-2.0 允许商�
 |---|---|---|
 | **做自己的 App/软件** | 某一档 ONNX 四件套（~600 MB） | sherpa-onnx 官方 SDK：C++ / Python / Java / Kotlin / Swift / C#，有 Windows、macOS、Linux、Android、iOS 预编译库；权重可随 App 打包或首启下载 |
 | **自建识别服务** | 某一档 ONNX + `deployment/infer_and_client/` 两个脚本 | 直接跑 WebSocket 服务端（见下方快速开始），或照协议自己实现服务端 |
-| **本机听写/语音输入** | 同上 + VAD 模型 | 参考 `deployment/x-asr-live-demo/`：FireRedVAD 端点检测决定一句何时结束，X-ASR 负责流式识别 |
+| **本机听写/语音输入** | 同上 + VAD 模型 | 流式 ASR 只负责边听边出字，需另接端点检测（如 FireRedVAD）判断一句何时结束 |
 | **微调/训练** | `.pt` checkpoint + `zipformer/` 训练代码 | 走 icefall/k2 训练框架，需要 GPU 与语料 |
 
 sherpa-onnx 侧模型类型传 `zipformer2`，运行时参数见快速开始一节；桌面应用可参考上游 Vibe XASR 的打包方式（单档模型 + 本地推理，离线可用）。
@@ -164,11 +163,6 @@ python infer_and_client/sherpa_streaming_client.py `
 | 3 | JSON `{"type":"end"}` | 结束会话，返回 final 结果 |
 
 每个连接独立 session，服务端支持多客户端并发。可选 `--enable-energy-tail-probe 1` 让停顿后的尾部 partial 刷新更及时（适合语音输入法类交互）。
-
-## 衍生玩法
-
-- **本机听写/VAD 联动**：上游 `x-asr-live-demo` 用 FireRedVAD 做端点检测 + X-ASR 流式解码，可改成"说完一句自动上屏"的离线语音输入
-- **Vibe XASR**：上游同作者的桌面语音输入法（macOS / Windows 预览版），发布在 [GitHub Releases](https://github.com/Gilgamesh-J/X-ASR/releases)
 
 ## 许可
 
