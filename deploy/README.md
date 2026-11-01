@@ -1,6 +1,6 @@
 # Streaming Zipformer ASR ONNX Deployment
 
-This folder contains deployment-ready ONNX models, a minimal WebSocket server/client, and a local live ASR demo for streaming inference with `sherpa-onnx`.
+This folder contains deployment-ready ONNX models and a minimal WebSocket server/client for streaming inference with `sherpa-onnx`.
 
 The package is intended for users who want to run the exported streaming Zipformer models locally or on a server. It does not require the original training code.
 
@@ -10,39 +10,29 @@ The WebSocket deployment entry has been updated together with the inference wrap
 
 | File | Role | Main update |
 | --- | --- | --- |
-| [`infer_and_client/sherpa_streaming_server.py`](infer_and_client/sherpa_streaming_server.py) | WebSocket ASR server | Supports the default streaming mode and an optional energy-based tail-probe mode for interactive voice-input demos. |
-| [`infer_and_client/sherpa_streaming_infer.py`](infer_and_client/sherpa_streaming_infer.py) | sherpa-onnx inference wrapper | Provides streaming decoding, text formatting, and silence-appending decode support used by tail probing. |
-| [`infer_and_client/sherpa_streaming_client.py`](infer_and_client/sherpa_streaming_client.py) | WAV-file WebSocket client | Sends audio chunks asynchronously and waits for partial/final server responses during testing. |
+| [`src/sherpa_streaming_server.py`](src/sherpa_streaming_server.py) | WebSocket ASR server | Supports the default streaming mode and an optional energy-based tail-probe mode for interactive voice-input demos. |
+| [`src/sherpa_streaming_infer.py`](src/sherpa_streaming_infer.py) | sherpa-onnx inference wrapper | Provides streaming decoding, text formatting, and silence-appending decode support used by tail probing. |
+| [`src/sherpa_streaming_client.py`](src/sherpa_streaming_client.py) | WAV-file WebSocket client | Sends audio chunks asynchronously and waits for partial/final server responses during testing. |
 
-For the script-level tutorial and the full parameter reference, see [`infer_and_client/README.md`](infer_and_client/README.md).
+For the script-level tutorial and the full parameter reference, see [`src/README.md`](src/README.md).
 
 ## Deployment Paths
 
 | Path | Use case |
 | --- | --- |
-| [`infer_and_client/`](infer_and_client/) | WebSocket streaming ASR server and WAV-file client for service-style deployment. |
-| [`x-asr-live-demo/`](x-asr-live-demo/) | Local live ASR application demo with microphone/WAV input, VAD endpointing, and live partial/final output. |
+| [`src/`](src/) | WebSocket streaming ASR server and WAV-file client for service-style deployment. |
 | [`models/`](models/) | Exported sherpa-onnx model artifacts for 160 ms, 480 ms, 960 ms, and 1920 ms streaming modes. |
 
 ## Directory Layout
 
 ```text
-X-ASR-zh-en/deployment/
+deploy/
 ├── requirements.txt                 # Python dependencies
-├── infer_and_client/
+├── src/
 │   ├── README.md                    # WebSocket server/client guide and parameter reference
 │   ├── sherpa_streaming_infer.py    # sherpa-onnx wrapper and text formatting
 │   ├── sherpa_streaming_server.py   # WebSocket streaming ASR server
 │   └── sherpa_streaming_client.py   # WAV-file WebSocket test client
-├── x-asr-live-demo/
-│   ├── README.md                    # Local live ASR demo guide
-│   ├── README_zh.md                 # Chinese local live ASR demo guide
-│   ├── live_asr.py                  # Mic/WAV + VAD + streaming ASR loop
-│   ├── download_models.sh           # Demo model download helper
-│   ├── requirements.txt             # Core demo dependencies
-│   ├── requirements-firered.txt     # Optional FireRedVAD dependency
-│   └── assets/
-│       └── streaming-demo.gif
 └── models/
     ├── chunk-160ms-model/
     │   ├── encoder-160ms.onnx
@@ -222,7 +212,7 @@ The server wraps this recognizer with a WebSocket interface. A client sends stre
 Example:
 
 ```bash
-python infer_and_client/sherpa_streaming_server.py \
+python src/sherpa_streaming_server.py \
   --host 0.0.0.0 \
   --port 8766 \
   --tokens models/chunk-160ms-model/tokens.txt \
@@ -363,10 +353,10 @@ Each WebSocket connection creates one streaming ASR session. Long-running sessio
 Run the server with the 160 ms model:
 
 ```bash
-cd X-ASR-zh-en/deployment
+cd deploy
 source .venv/bin/activate
 
-python infer_and_client/sherpa_streaming_server.py \
+python src/sherpa_streaming_server.py \
   --host 0.0.0.0 \
   --port 8766 \
   --tokens models/chunk-160ms-model/tokens.txt \
@@ -398,10 +388,10 @@ To enable the optional interactive tail-probe mode, add:
 In another terminal, test it with a WAV file:
 
 ```bash
-cd X-ASR-zh-en/deployment
+cd deploy
 source .venv/bin/activate
 
-python infer_and_client/sherpa_streaming_client.py \
+python src/sherpa_streaming_client.py \
   --server-uri ws://127.0.0.1:8766 \
   --wav /path/to/test.wav \
   --chunk-ms 100 \
@@ -415,7 +405,7 @@ The client sends 16 kHz mono int16 PCM chunks over WebSocket and prints partial/
 480 ms:
 
 ```bash
-python infer_and_client/sherpa_streaming_server.py \
+python src/sherpa_streaming_server.py \
   --port 8766 \
   --tokens models/chunk-480ms-model/tokens.txt \
   --encoder models/chunk-480ms-model/encoder-480ms.onnx \
@@ -428,7 +418,7 @@ python infer_and_client/sherpa_streaming_server.py \
 960 ms:
 
 ```bash
-python infer_and_client/sherpa_streaming_server.py \
+python src/sherpa_streaming_server.py \
   --port 8766 \
   --tokens models/chunk-960ms-model/tokens.txt \
   --encoder models/chunk-960ms-model/encoder-960ms.onnx \
@@ -441,7 +431,7 @@ python infer_and_client/sherpa_streaming_server.py \
 1920 ms:
 
 ```bash
-python infer_and_client/sherpa_streaming_server.py \
+python src/sherpa_streaming_server.py \
   --port 8766 \
   --tokens models/chunk-1920ms-model/tokens.txt \
   --encoder models/chunk-1920ms-model/encoder-1920ms.onnx \
@@ -543,7 +533,7 @@ The server exposes:
 --text-format capitalize
 ```
 
-Formatting is implemented in `infer_and_client/sherpa_streaming_infer.py`.
+Formatting is implemented in `src/sherpa_streaming_infer.py`.
 
 The current normalization also removes unnecessary spaces:
 
@@ -587,7 +577,7 @@ For a simple server deployment, use `tmux`:
 
 ```bash
 tmux new-session -d -s streaming-asr \
-  'cd /path/to/X-ASR-Series/X-ASR-zh-en/deployment && source .venv/bin/activate && python infer_and_client/sherpa_streaming_server.py \
+  'cd /path/to/deploy && source .venv/bin/activate && python src/sherpa_streaming_server.py \
     --host 0.0.0.0 \
     --port 8766 \
     --tokens models/chunk-160ms-model/tokens.txt \

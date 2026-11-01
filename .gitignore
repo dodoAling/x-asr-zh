@@ -1,6 +1,8 @@
 # 模型权重不随仓库走（用 scripts/download-models.ps1 拉取）
-X-ASR-zh-en/deployment/models/
-X-ASR-zh-en/zipformer/checkpoint/
+deploy/models/*/encoder-*.onnx
+deploy/models/*/decoder-*.onnx
+deploy/models/*/joiner-*.onnx
+training/checkpoint/
 *.onnx
 *.pt
 *.safetensors

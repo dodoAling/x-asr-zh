@@ -69,10 +69,10 @@ echo "完成: $(cd "$(dirname "$DMG")" && pwd)/$(basename "$DMG")  (v$VER)"
 echo "== 附:Sparkle 更新包 + appcast =="
 # Sparkle in-place update payload = a zip of the STAPLED app (notarization ticket
 # travels inside, so Gatekeeper passes after extraction). appcast.xml (small) is
-# served via raw.githubusercontent.com from projects/docs/ on main (this IS the app's
+# served via raw.githubusercontent.com from site/ on main (this IS the app's
 # SUFeedURL); the zip itself is a GitHub Releases asset on Gilgamesh-J/X-ASR.
 SPARKLE_BIN="native/third_party/sparkle/bin"
-DOCS="../../docs"   # = projects/docs/ — the exact path the app's SUFeedURL fetches
+DOCS="../../../site"   # = site/ — the exact path the app's SUFeedURL fetches
 UPDATE_ZIP="native/dist/VibeXASR-${VER}.zip"
 BUILD_NUM="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "native/app/Resources/Info.plist" 2>/dev/null || echo 1)"
 if [ -x "$SPARKLE_BIN/sign_update" ]; then
@@ -83,7 +83,7 @@ if [ -x "$SPARKLE_BIN/sign_update" ]; then
   # 默认下载源 = R2 CDN(国内快;EdDSA 签名只签字节,换 host 不影响验签)。GitHub Releases 仍留作备份镜像。
   # ?b=<build>:同名文件覆盖后破 Cloudflare 缓存——否则 CDN 边缘可能仍返回旧字节,与新 edSignature 对不上致更新失败。
   DL_URL="https://models.speech.wiki/app/VibeXASR-${VER}.zip?b=${BUILD_NUM}"
-  # 更新说明:读 projects/docs/notes-<VER>.html(若有),作为 Sparkle 弹窗里的发行说明。
+  # 更新说明:读 site/notes-<VER>.html(若有),作为 Sparkle 弹窗里的发行说明。
   NOTES_FILE="$DOCS/notes-${VER}.html"
   NOTES="$( [ -f "$NOTES_FILE" ] && cat "$NOTES_FILE" || printf 'Vibe XASR %s' "$VER" )"
   # notes 也按 build 号发到 R2(不可变 URL,免缓存),appcast 用 releaseNotesLink 实时拉取;
@@ -119,7 +119,7 @@ XML
   echo "✅ 写入 $DOCS/appcast.xml  (enclosure → $DL_URL)"
   echo
   echo "提示:dmg/zip 会自动传到 GitHub Release + R2(见下)。剩下唯一手动步骤:"
-  echo "  提交并推送 projects/docs/appcast.xml(push 到 main 后 raw.githubusercontent.com 即刻生效,旧版 App 即可检测到新版)"
+  echo "  提交并推送 site/appcast.xml(push 到 main 后 raw.githubusercontent.com 即刻生效,旧版 App 即可检测到新版)"
 else
   echo "   跳过:未找到 $SPARKLE_BIN/sign_update"
 fi
@@ -149,7 +149,7 @@ fi
 
 echo "== 附:同步安装包到 Cloudflare R2 CDN(国内加速)=="
 # 每次公证完成的安装包都同步一份到 R2(custom domain models.speech.wiki/app/),
-# 作为 GitHub Releases 之外的国内加速下载源。凭据在 projects/scripts/.env(gitignore);
+# 作为 GitHub Releases 之外的国内加速下载源。凭据在 scripts/.env(gitignore);
 # 没配 .env / 脚本就静默跳过(不影响发布)。
 R2UP="../../scripts/r2_upload.sh"
 if [ -x "$R2UP" ]; then

@@ -52,7 +52,7 @@ python eval_refiner.py --input my_asr.txt --show-diff
 
 ## 下一步(过关之后)
 
-集成进 [`macos_build`](../macos_build/) 时的设计要点(详见此前讨论):
+集成进 [`macos`](../macos/) 时的设计要点(详见此前讨论):
 默认关 + Beta 角标、按需下载模型、挂在后处理链**最后一环**、只做口癖/顺滑(**不接管 ITN**)、
 带「改动率超阈值回退原文」护栏、不进实时插入路径(整段说完后再二次替换)。
 MLX 是 Apple-only,Windows 对齐需另用 onnxruntime-genai / llama.cpp,Beta 阶段暂不还这笔账。

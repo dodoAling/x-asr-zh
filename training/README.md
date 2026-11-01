@@ -2,12 +2,12 @@
 
 This directory contains the icefall/Zipformer recipe files used for the released `X-ASR-zh-en` model. It is intended for users who want to inspect the training code, reproduce or adapt the recipe, run decoding, or export checkpoints for deployment.
 
-For ready-to-run sherpa-onnx WebSocket deployment, see [`../deployment/README.md`](../deployment/README.md).
+For ready-to-run sherpa-onnx WebSocket deployment, see [`../deploy/README.md`](../deploy/README.md).
 
 ## Directory Layout
 
 ```text
-zipformer/
+training/
 |-- README.md
 |-- train.py
 |-- finetune.py
@@ -51,7 +51,7 @@ Use the data folder that matches the checkpoint being loaded. In the commands be
 ### Base Training
 
 ```bash
-python ./zipformer/train.py \
+python ./training/train.py \
   --world-size 8 \
   --num-epochs 5 \
   --start-epoch 1 \
@@ -76,7 +76,7 @@ python ./zipformer/train.py \
 ### Fine-tuning for Punctuation and Casing
 
 ```bash
-python3 ./zipformer/finetune.py \
+python3 ./training/finetune.py \
   --world-size 8 \
   --num-epochs 1 \
   --start-epoch 1 \
@@ -107,7 +107,7 @@ python3 ./zipformer/finetune.py \
 ### Offline Decoding
 
 ```bash
-./zipformer/decode.py \
+./training/decode.py \
   --exp-dir /exp_dir \
   --use-ctc False \
   --use-transducer True \
@@ -129,7 +129,7 @@ python3 ./zipformer/finetune.py \
 ### Streaming Decoding
 
 ```bash
-./zipformer/streaming_decode.py \
+./training/streaming_decode.py \
   --exp-dir /exp_dir \
   --use-ctc 0 \
   --use-transducer 1 \
@@ -151,5 +151,5 @@ python3 ./zipformer/finetune.py \
 ## Notes
 
 - Use checkpoint files from `checkpoint/` when running this recipe.
-- ONNX deployment artifacts are maintained separately under `../deployment/models/`.
+- ONNX deployment artifacts are maintained separately under `../deploy/models/`.
 - Do not mix PyTorch checkpoints in this directory with ONNX files from different model releases unless the export path is explicitly verified.

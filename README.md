@@ -12,12 +12,13 @@
 
 | 目录 | 内容 |
 |---|---|
-| `X-ASR-zh-en/deployment/` | sherpa-onnx 部署：WebSocket 服务端/客户端、模型目录（权重需下载） |
-| `X-ASR-zh-en/zipformer/` | icefall 训练代码与词表（`.pt` checkpoint 需下载） |
-| `projects/Vibe_XASR/` | 桌面语音输入法工程（macOS / Windows） |
-| `scripts/` | 本仓库新增：模型下载脚本 |
-| `docs/` | 上游原始 README（英文/中文存档） |
-| `assets/` | 上游图片素材 |
+| `deploy/` | sherpa-onnx 部署：WebSocket 服务端/客户端（`deploy/src/`）、`deploy/models/` 模型目录（权重需下载） |
+| `training/` | icefall 训练代码与词表（`.pt` checkpoint 需下载） |
+| `apps/vibe-xasr/` | 桌面语音输入法工程（`macos/`、`windows/`） |
+| `site/` | 桌面应用的更新源页面（appcast / 发行说明） |
+| `scripts/` | 模型下载脚本 |
+| `docs/` | 原始 README 存档（英文/中文） |
+| `assets/` | 图片素材 |
 
 ## 模型仓库（两个源，内容相同）
 
@@ -84,9 +85,9 @@ X-ASR 是标准 sherpa-onnx zipformer2 transducer 模型，Apache-2.0 允许商�
 | 目标 | 需要的文件 | 怎么集成 |
 |---|---|---|
 | **做自己的 App/软件** | 某一档 ONNX 四件套（~600 MB） | sherpa-onnx 官方 SDK：C++ / Python / Java / Kotlin / Swift / C#，有 Windows、macOS、Linux、Android、iOS 预编译库；权重可随 App 打包或首启下载 |
-| **自建识别服务** | 某一档 ONNX + `deployment/infer_and_client/` 两个脚本 | 直接跑 WebSocket 服务端（见下方快速开始），或照协议自己实现服务端 |
+| **自建识别服务** | 某一档 ONNX + `deploy/src/` 三个脚本 | 直接跑 WebSocket 服务端（见下方快速开始），或照协议自己实现服务端 |
 | **本机听写/语音输入** | 同上 + VAD 模型 | 流式 ASR 只负责边听边出字，需另接端点检测（如 FireRedVAD）判断一句何时结束 |
-| **微调/训练** | `.pt` checkpoint + `zipformer/` 训练代码 | 走 icefall/k2 训练框架，需要 GPU 与语料 |
+| **微调/训练** | `.pt` checkpoint + `training/` 训练代码 | 走 icefall/k2 训练框架，需要 GPU 与语料 |
 
 sherpa-onnx 侧模型类型传 `zipformer2`，运行时参数见快速开始一节；桌面应用可参考上游 Vibe XASR 的打包方式（单档模型 + 本地推理，离线可用）。
 
@@ -106,7 +107,7 @@ pip install huggingface_hub[hf_transfer]
 hf download GilgameshWind/X-ASR-zh-en --local-dir ./X-ASR-zh-en
 ```
 
-只要某一档，用 include 过滤：
+只要某一档，用 include 过滤（下载后把 `deployment/models/chunk-<N>ms-model/` 移到本仓库 `deploy/models/` 下）：
 
 ```powershell
 hf download GilgameshWind/X-ASR-zh-en `
@@ -114,7 +115,9 @@ hf download GilgameshWind/X-ASR-zh-en `
   --local-dir ./X-ASR-zh-en
 ```
 
-### 方式三：本仓库脚本
+### 方式三：本仓库脚本（推荐）
+
+直接落到 `deploy/models/`：
 
 ```powershell
 # 默认拉 480ms 档，源可选 hf / modelscope
@@ -123,10 +126,8 @@ hf download GilgameshWind/X-ASR-zh-en `
 
 ## 快速开始（WebSocket 流式）
 
-部署代码在上游仓库的 `X-ASR-zh-en/deployment/` 下，HF/ModelScope 的模型包里也带 `deployment/` 目录。
-
 ```powershell
-cd X-ASR-zh-en/deployment
+cd deploy
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
@@ -135,7 +136,7 @@ pip install -r requirements.txt
 启动服务端（以 480 ms 档、CPU 为例）：
 
 ```powershell
-python infer_and_client/sherpa_streaming_server.py `
+python src/sherpa_streaming_server.py `
   --host 0.0.0.0 --port 6666 `
   --tokens models/chunk-480ms-model/tokens.txt `
   --encoder models/chunk-480ms-model/encoder-480ms.onnx `
@@ -149,7 +150,7 @@ python infer_and_client/sherpa_streaming_server.py `
 另开终端跑客户端（把 WAV 按实时速度推流）：
 
 ```powershell
-python infer_and_client/sherpa_streaming_client.py `
+python src/sherpa_streaming_client.py `
   --server-uri ws://127.0.0.1:6666 `
   --wav .\test.wav --chunk-ms 100 --simulate-realtime 1
 ```

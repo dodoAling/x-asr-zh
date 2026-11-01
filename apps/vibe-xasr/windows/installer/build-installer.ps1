@@ -11,7 +11,7 @@
 param([string]$Rid = "win-x64", [string]$Version = "1.1.2.0")
 $ErrorActionPreference = "Stop"
 $here = $PSScriptRoot
-$repo = Split-Path $here -Parent           # windows_build/
+$repo = Split-Path $here -Parent           # windows/
 
 # --- resolve dotnet (prefer PATH; fall back to per-user ~/.dotnet) ---
 $dotnet = "dotnet"
@@ -20,7 +20,7 @@ if (Get-Command dotnet -ErrorAction SilentlyContinue) { try { $hasSdk = [bool](&
 if (-not $hasSdk) {
     $u = Join-Path $env:USERPROFILE ".dotnet\dotnet.exe"
     if (Test-Path $u) { $dotnet = $u; $env:DOTNET_ROOT = Split-Path $u; $env:DOTNET_MULTILEVEL_LOOKUP = "0" }
-    else { throw "No .NET SDK found (see windows_build\README.md)." }
+    else { throw "No .NET SDK found (see windows\README.md)." }
 }
 
 # --- resolve wix v5 ---
@@ -50,11 +50,11 @@ $rtDst = Join-Path $payload "runtimes"
 if (-not (Test-Path (Join-Path $rtSrc "win-x64\native\avx2\llama.dll"))) { throw "llama natives missing in publish output ($rtSrc) — check the csproj _LlamaNativesLooseInSingleFile target." }
 if (Test-Path $rtDst) { Remove-Item $rtDst -Recurse -Force }
 Copy-Item $rtSrc $rtDst -Recurse -Force
-# FireRedVAD shim (default VAD) + its model (onnx + CMVN), sourced from macos_build (committed there).
+# FireRedVAD shim (default VAD) + its model (onnx + CMVN), sourced from macos (committed there).
 Copy-Item "$repo\third_party\firered\firered_vad.dll" (Join-Path $payload "firered_vad.dll") -Force
 $frm = Join-Path $payload "models\firered"
 New-Item -ItemType Directory -Force $frm | Out-Null
-$frsrc = Join-Path (Split-Path $repo -Parent) "macos_build\models\firered"
+$frsrc = Join-Path (Split-Path $repo -Parent) "macos\models\firered"
 foreach ($f in 'firered_vad.onnx','cmvn_means.bin','cmvn_istd.bin') { Copy-Item (Join-Path $frsrc $f) $frm -Force }
 
 # Default 960 ms tier — int8-quantized archive from the official CDN (R2), matching macOS build 202
@@ -75,9 +75,9 @@ if (-not (Test-Path $sv)) {
     Invoke-WebRequest "https://github.com/snakers4/silero-vad/raw/v4.0/files/silero_vad.onnx" -OutFile $sv -UseBasicParsing
 }
 
-# Dictionary resources: pinyin homophone table (committed in macos_build) + bpe.vocab for
+# Dictionary resources: pinyin homophone table (committed in macos) + bpe.vocab for
 # hotword tokenization, generated from the bundled tokens.txt.
-Copy-Item (Join-Path (Split-Path $repo -Parent) "macos_build\native\app\Resources\pinyin.txt") (Join-Path $payload "models\pinyin.txt") -Force
+Copy-Item (Join-Path (Split-Path $repo -Parent) "macos\native\app\Resources\pinyin.txt") (Join-Path $payload "models\pinyin.txt") -Force
 & (Join-Path $here "make-bpe-vocab.ps1") -Tokens (Join-Path $tier "tokens.txt") -Out (Join-Path $payload "models\bpe.vocab")
 
 # --- 3. build the MSI (Version flows into the WiX Package/@Version) ---
@@ -92,7 +92,7 @@ Write-Host "Done: $msiOut" -ForegroundColor Green
 # Versioned name + a stable "latest" alias, like macOS app/VibeXASR-<VER>.dmg + app/VibeXASR.dmg.
 # Skipped silently if the (gitignored) uploader / creds aren't present on this machine.
 $disp   = ($Version -split '\.')[0..1] -join '.'                       # 2.0.0.1 -> 2.0
-$scripts = Join-Path (Split-Path (Split-Path $repo -Parent) -Parent) "scripts"   # projects/scripts
+$scripts = Join-Path (Split-Path (Split-Path (Split-Path $repo -Parent) -Parent) -Parent) "scripts"   # repo-root scripts/
 $r2py   = Join-Path $scripts "r2_upload.py"
 $r2env  = Join-Path $scripts ".env"
 if ((Test-Path $r2py) -and (Test-Path $r2env)) {
@@ -104,5 +104,5 @@ if ((Test-Path $r2py) -and (Test-Path $r2env)) {
         & python $r2py $msiOut "app/VibeXASR.msi"       "application/x-msi" "public, max-age=300"
     } catch { Write-Host "  R2 upload failed (non-fatal): $_" -ForegroundColor Yellow }
 } else {
-    Write-Host "R2 upload skipped (projects/scripts/.env not present)" -ForegroundColor DarkGray
+    Write-Host "R2 upload skipped (scripts/.env not present)" -ForegroundColor DarkGray
 }

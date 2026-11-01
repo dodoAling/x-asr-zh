@@ -1,5 +1,5 @@
 # build.ps1 — publish self-contained single-file binaries for win-x64 and win-arm64.
-# Run ON WINDOWS in PowerShell from the windows_build/ directory:
+# Run ON WINDOWS in PowerShell from the windows/ directory:
 #     powershell -ExecutionPolicy Bypass -File .\build.ps1
 # Requires the .NET 8 SDK (https://dotnet.microsoft.com/download/dotnet/8.0).
 #

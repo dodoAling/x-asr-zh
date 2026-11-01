@@ -5,7 +5,7 @@ This directory contains the minimal WebSocket deployment path for X-ASR-zh-en wi
 Run the commands below from the parent deployment directory:
 
 ```bash
-cd X-ASR-zh-en/deployment
+cd deploy
 ```
 
 ## Files
@@ -49,7 +49,7 @@ python -m pip install -r requirements.txt
 Start the default 160 ms model on CPU:
 
 ```bash
-python infer_and_client/sherpa_streaming_server.py \
+python src/sherpa_streaming_server.py \
   --host 0.0.0.0 \
   --port 6666 \
   --tokens models/chunk-160ms-model/tokens.txt \
@@ -69,7 +69,7 @@ python infer_and_client/sherpa_streaming_server.py \
 Enable interactive tail-probe mode by adding the tail-probe options:
 
 ```bash
-python infer_and_client/sherpa_streaming_server.py \
+python src/sherpa_streaming_server.py \
   --host 0.0.0.0 \
   --port 6666 \
   --tokens models/chunk-160ms-model/tokens.txt \
@@ -102,7 +102,7 @@ Open another terminal in the same deployment directory:
 ```bash
 source .venv/bin/activate
 
-python infer_and_client/sherpa_streaming_client.py \
+python src/sherpa_streaming_client.py \
   --server-uri ws://127.0.0.1:6666 \
   --wav /path/to/test.wav \
   --chunk-ms 100 \

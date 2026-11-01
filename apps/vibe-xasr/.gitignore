@@ -6,21 +6,21 @@
 .build/
 *.dSYM/
 *.tar.bz2
-macos_build/native/dist/
+macos/native/dist/
 
 # local-only eval tools (not shipped)
 tools/
 
 # Colleague's parallel macOS copy — local reference only, never commit.
-macos_build_other_teammate/
-# Local backup of a previous macos_build — never commit.
-macos_build.bak/
+macos_other_teammate/
+# Local backup of a previous macos — never commit.
+macos.bak/
 
 # ASR model payload on Windows is fetched / staged at build time, never committed.
 # Anchored to the payload dir on purpose: a bare `**/models/` also matches the C# source
-# directory windows_build/src/VibeXASR.Windows/Models/ and would drop ModelPaths.cs etc.
-# (windows_build/.gitignore covers the rest of the Windows build output: bin/ obj/ dist/ payload/.)
-windows_build/installer/payload/models/
+# directory windows/src/VibeXASR.Windows/Models/ and would drop ModelPaths.cs etc.
+# (windows/.gitignore covers the rest of the Windows build output: bin/ obj/ dist/ payload/.)
+windows/installer/payload/models/
 
 # Logs / scratch
 *.log
@@ -36,10 +36,10 @@ docs/uploads/
 docs/README.md
 
 # Local macOS build deps (prebuilt native libs + VAD models — NOT committed; copy in once to build here)
-macos_build/native/sherpa/dist/
-macos_build/native/third_party/onnxruntime/
-macos_build/models/firered/firered_vad.onnx
-macos_build/native/app/Resources/silero_vad.onnx
+macos/native/sherpa/dist/
+macos/native/third_party/onnxruntime/
+macos/models/firered/firered_vad.onnx
+macos/native/app/Resources/silero_vad.onnx
 # llama.cpp 源码 + 构建产物(库/量化 GGUF)—— 体积大、属构建依赖,不提交;build.sh/convert_to_gguf.sh 保留。
-macos_build/native/llama/llama.cpp/
-macos_build/native/llama/dist/
+macos/native/llama/llama.cpp/
+macos/native/llama/dist/

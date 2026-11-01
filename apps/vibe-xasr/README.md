@@ -22,12 +22,12 @@ macOS 版需要 **macOS 15 (Sequoia)+**(Universal,Apple Silicon 与 Intel 通用
 
 > ⚠️ 本目录仅含**源码**。预编译原生依赖(sherpa-onnx / onnxruntime 的 `*.dylib` / `*.dll`)与 VAD 模型(`*.onnx`)**未纳入版本库**,需用脚本获取/编译;ASR 模型从 HuggingFace [`GilgameshWind/X-ASR-zh-en`](https://huggingface.co/GilgameshWind/X-ASR-zh-en) 获取。
 
-**macOS**(`macos_build/`)
+**macOS**(`macos/`)
 1. `native/sherpa/build.sh` — 编译 sherpa-onnx 原生库
 2. `native/app/build_app.sh` — 构建 App(`ASR_SRC=<X-ASR 模型目录>`)
 3. `package_release.sh` — Developer ID 签名 + 公证 + 打包 dmg/zip + 生成 Sparkle appcast
 
-**Windows**(`windows_build/`):见 `windows_build/README.md`。
+**Windows**(`windows/`):见 `windows/README.md`。
 
 ## 致谢 / Credits
 

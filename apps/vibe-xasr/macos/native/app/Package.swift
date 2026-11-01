@@ -16,7 +16,7 @@
 import PackageDescription
 import Foundation
 
-// B = the macos_build/ root, derived from this manifest's location (no hardcoded
+// B = the macos/ root, derived from this manifest's location (no hardcoded
 // absolute path → portable). This file lives at <B>/native/app/Package.swift, so
 // strip three path components.
 let B = URL(fileURLWithPath: #filePath)

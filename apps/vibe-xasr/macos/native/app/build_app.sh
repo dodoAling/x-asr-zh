@@ -25,7 +25,7 @@
 
 set -euo pipefail
 
-# B = the macos_build/ root, derived from this script's location (no hardcoded
+# B = the macos/ root, derived from this script's location (no hardcoded
 # absolute path → the repo is portable). build_app.sh lives at native/app/.
 B="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 APP_SRC="$B/native/app"

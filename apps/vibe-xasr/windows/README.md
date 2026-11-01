@@ -65,7 +65,7 @@ into `%APPDATA%\VibeXASR\models\chunk-960ms-model\` to skip the first-run downlo
 
 ## Build
 
-From `windows_build/` in PowerShell:
+From `windows/` in PowerShell:
 
 ```powershell
 # both architectures into dist/
@@ -149,7 +149,7 @@ referenced via `<ApplicationIcon>`), so Explorer / shortcuts / the tray all show
 ## Source layout
 
 ```
-windows_build/
+windows/
 ├─ VibeXASR.Windows.sln
 ├─ build.ps1
 ├─ README.md
