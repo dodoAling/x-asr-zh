@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/banner.png" alt="X-ASR 中英文流式语音识别" width="960"></p>
+
 # X-ASR 中文使用指南
 
 基于 icefall/k2、Zipformer transducer 架构的**中英文流式语音识别模型**使用说明。
