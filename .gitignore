@@ -1,0 +1,14 @@
+# 模型权重不随仓库走
+X-ASR-zh-en/
+models/
+*.onnx
+*.pt
+*.bin
+
+# Python
+.venv/
+__pycache__/
+
+# 系统
+.DS_Store
+Thumbs.db
