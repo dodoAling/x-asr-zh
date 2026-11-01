@@ -170,8 +170,7 @@ python infer_and_client/sherpa_streaming_client.py `
 - **本机听写/VAD 联动**：上游 `x-asr-live-demo` 用 FireRedVAD 做端点检测 + X-ASR 流式解码，可改成"说完一句自动上屏"的离线语音输入
 - **Vibe XASR**：上游同作者的桌面语音输入法（macOS / Windows 预览版），发布在 [GitHub Releases](https://github.com/Gilgamesh-J/X-ASR/releases)
 
-## 说明
+## 许可
 
-- 代码与模型权重来自 [Gilgamesh-J/X-ASR](https://github.com/Gilgamesh-J/X-ASR)，[Apache-2.0](LICENSE)，商用允许，再分发需保留 LICENSE 与版权头
-- 本仓库对上游的改动：README 替换为中文指南（原文存档在 `docs/`）、新增 `scripts/download-models.ps1`、`.gitignore` 排除权重文件；其余代码未改动
-- 本仓库与上游无官方关系；模型问题请去 [上游 Issues](https://github.com/Gilgamesh-J/X-ASR/issues)
+- 代码与模型按 [Apache-2.0](LICENSE) 发布：允许商用、修改与再分发
+- 再分发时需保留 LICENSE 及各源文件内的版权声明；模型权重与媒体文件不包含在本仓库内
